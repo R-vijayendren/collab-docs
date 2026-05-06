@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Document {
+  id        String    @id @default(cuid())
+  title     String    @default("Untitled")
+  yjsState  Bytes?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  versions  Version[]
+}
+
+model Version {
+  id         String   @id @default(cuid())
+  documentId String
+  title      String
+  yjsState   Bytes
+  createdAt  DateTime @default(now())
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+}
